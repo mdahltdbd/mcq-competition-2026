@@ -1,0 +1,441 @@
+```html
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>প্রতিযোগীর ড্যাশবোর্ড | MCQ COMPETITION 2026</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans Bengali", sans-serif;
+      background: #f1f5f9;
+      color: #172033;
+    }
+
+    header {
+      background: #123b70;
+      color: white;
+      padding: 22px 15px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 25px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 25px auto;
+      padding: 0 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 12px #0000000d;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #123b70;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 12px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .label {
+      color: #64748b;
+    }
+
+    .value {
+      text-align: right;
+      font-weight: bold;
+      overflow-wrap: anywhere;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 6px 10px;
+      background: #e2e8f0;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .status.success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status.danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .message {
+      padding: 12px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      background: #e0f2fe;
+      color: #075985;
+      line-height: 1.6;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    a.button,
+    button {
+      display: inline-block;
+      padding: 12px 17px;
+      border: none;
+      border-radius: 7px;
+      font-size: 15px;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #123b70;
+      color: white;
+    }
+
+    .secondary {
+      background: #e2e8f0;
+      color: #172033;
+    }
+
+    .logout {
+      background: #b91c1c;
+      color: white;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    @media (max-width: 480px) {
+      .info-row {
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .value {
+        text-align: left;
+      }
+
+      .actions a,
+      .actions button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>MCQ COMPETITION 2026</h1>
+    <p>প্রতিযোগীর ব্যক্তিগত ড্যাশবোর্ড</p>
+  </header>
+
+  <main class="container">
+    <div id="message" class="message" role="status" aria-live="polite">
+      আপনার তথ্য লোড হচ্ছে...
+    </div>
+
+    <section id="dashboard" hidden>
+      <div class="card">
+        <h2>প্রতিযোগীর প্রোফাইল</h2>
+
+        <div class="info-row">
+          <span class="label">প্রতিযোগীর নাম</span>
+          <span class="value" id="name">তথ্য পাওয়া যায়নি</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Registration ID</span>
+          <span class="value" id="registrationId">তথ্য পাওয়া যায়নি</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">মোবাইল নম্বর</span>
+          <span class="value" id="mobile">তথ্য পাওয়া যায়নি</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">বিভাগ</span>
+          <span class="value" id="division">তথ্য পাওয়া যায়নি</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">জেলা</span>
+          <span class="value" id="district">তথ্য পাওয়া যায়নি</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">গ্রুপ</span>
+          <span class="value" id="groupName">তথ্য পাওয়া যায়নি</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>পেমেন্ট স্ট্যাটাস</h2>
+        <div class="info-row">
+          <span class="label">রেজিস্ট্রেশন ফি</span>
+          <span class="value">৳৯৯</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">পেমেন্টের অবস্থা</span>
+          <span class="value">
+            <span id="paymentStatus" class="status">যাচাই হচ্ছে</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>পরীক্ষার স্ট্যাটাস</h2>
+
+        <div class="info-row">
+          <span class="label">পরীক্ষার অবস্থা</span>
+          <span class="value">
+            <span id="examStatus" class="status">তথ্য পাওয়া যায়নি</span>
+          </span>
+        </div>
+
+        <p id="examMessage">
+          পরীক্ষার সময়সূচি ও নির্দেশনার জন্য অফিসিয়াল নোটিশ দেখুন।
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>অন্যান্য কাজ</h2>
+        <div class="actions">
+          <a class="button primary" href="exam.html">পরীক্ষার পেজ</a>
+          <a class="button secondary" href="result.html">ফলাফল দেখুন</a>
+          <button class="logout" id="logoutButton" type="button">
+            Logout
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="actions" id="loginActions" hidden>
+      <a class="button primary" href="login.html">লগইন করুন</a>
+      <a class="button secondary" href="index.html">হোম পেজ</a>
+    </div>
+  </main>
+
+  <footer>
+    MCQ COMPETITION 2026 — প্রতিযোগীর ড্যাশবোর্ড
+  </footer>
+
+  <script>
+    "use strict";
+
+    const messageBox = document.getElementById("message");
+    const dashboard = document.getElementById("dashboard");
+    const loginActions = document.getElementById("loginActions");
+
+    function setMessage(message, isError = false) {
+      messageBox.textContent = message;
+      messageBox.className = isError
+        ? "message error"
+        : "message";
+      messageBox.hidden = false;
+    }
+
+    function setText(id, value) {
+      const element = document.getElementById(id);
+
+      if (value !== null && value !== undefined && value !== "") {
+        element.textContent = String(value);
+      } else {
+        element.textContent = "তথ্য পাওয়া যায়নি";
+      }
+    }
+
+    function setStatus(id, value, type) {
+      const element = document.getElementById(id);
+
+      element.textContent = value || "যাচাই হচ্ছে";
+      element.className = "status";
+
+      if (type === "success") {
+        element.classList.add("success");
+      } else if (type === "pending") {
+        element.classList.add("pending");
+      } else if (type === "danger") {
+        element.classList.add("danger");
+      }
+    }
+
+    async function requestJSON(url, options = {}) {
+      const response = await fetch(url, {
+        credentials: "same-origin",
+        ...options,
+        headers: {
+          ...(options.headers || {})
+        }
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || "সার্ভার থেকে তথ্য পাওয়া যায়নি।");
+      }
+
+      return data;
+    }
+
+    function showDashboard(data) {
+      const profile = data.profile || data.participant || data;
+
+      setText("name", profile.name);
+      setText("registrationId", data.registrationId || profile.registrationId);
+      setText("mobile", profile.mobile);
+      setText("division", profile.division);
+      setText("district", profile.district);
+      setText("groupName", profile.group_name || profile.groupName);
+
+      const payment = String(data.paymentStatus || profile.payment_status || "")
+        .toLowerCase();
+
+      if (payment === "paid" || payment === "completed") {
+        setStatus("paymentStatus", "পেমেন্ট সম্পন্ন", "success");
+      } else if (
+        payment === "pending" ||
+        payment === "unpaid" ||
+        payment === "failed"
+      ) {
+        setStatus(
+          "paymentStatus",
+          payment === "failed" ? "পেমেন্ট ব্যর্থ" : "পেমেন্ট বাকি",
+          payment === "failed" ? "danger" : "pending"
+        );
+      } else {
+        setStatus("paymentStatus", "যাচাই চলছে", "pending");
+      }
+
+      const exam = String(data.examStatus || profile.exam_status || "")
+        .toLowerCase();
+
+      if (exam === "completed" || exam === "submitted") {
+        setStatus("examStatus", "পরীক্ষা সম্পন্ন", "success");
+        document.getElementById("examMessage").textContent =
+          "আপনার পরীক্ষা জমা হয়েছে। ফলাফল প্রকাশের নোটিশ দেখুন।";
+      } else if (exam === "ongoing" || exam === "started") {
+        setStatus("examStatus", "পরীক্ষা চলছে", "pending");
+        document.getElementById("examMessage").textContent =
+          "পরীক্ষার নির্দেশনা অনুসরণ করুন।";
+      } else if (exam === "not_started" || exam === "upcoming") {
+        setStatus("examStatus", "পরীক্ষা শুরু হয়নি", "pending");
+      } else {
+        setStatus("examStatus", "সময়সূচি যাচাই করুন", "pending");
+      }
+
+      dashboard.hidden = false;
+      messageBox.hidden = true;
+    }
+
+    async function loadDashboard() {
+      try {
+        const data = await requestJSON("/api/auth/me");
+
+        if (!data.loggedIn) {
+          setMessage("আপনি লগইন করেননি। ড্যাশবোর্ড দেখতে আগে লগইন করুন।");
+          loginActions.hidden = false;
+          return;
+        }
+
+        /*
+          এই পেজের পূর্ণ প্রোফাইল দেখাতে সার্ভারের
+          /api/dashboard রুট প্রয়োজন।
+        */
+        const profileData = await requestJSON("/api/dashboard");
+
+        if (profileData.loggedIn === false) {
+          setMessage("আপনার সেশন শেষ হয়েছে। আবার লগইন করুন।");
+          loginActions.hidden = false;
+          return;
+        }
+
+        showDashboard(profileData);
+      } catch (error) {
+        setMessage(
+          error.message ||
+          "তথ্য লোড করা যায়নি। সার্ভার চালু আছে কি না পরীক্ষা করুন।",
+          true
+        );
+      }
+    }
+
+    document.getElementById("logoutButton").addEventListener(
+      "click",
+      async function () {
+        this.disabled = true;
+
+        try {
+          await requestJSON("/api/auth/logout", {
+            method: "POST"
+          });
+
+          window.location.href = "login.html";
+        } catch (error) {
+          this.disabled = false;
+          setMessage(
+            "লগআউট করা যায়নি। আবার চেষ্টা করুন।",
+            true
+          );
+        }
+      }
+    );
+
+    loadDashboard();
+  </script>
+</body>
+</html>
+```

@@ -1,0 +1,326 @@
+```html
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCQ COMPETITION 2026 — পরীক্ষা</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      color: #172033;
+    }
+
+    header {
+      background: #123b70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 22px auto;
+      padding: 0 14px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 3px 12px #0000000d;
+    }
+
+    #questionText {
+      font-size: 20px;
+      line-height: 1.7;
+    }
+
+    .option {
+      display: block;
+      border: 1px solid #cbd5e1;
+      padding: 13px;
+      margin: 10px 0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .option:has(input:checked) {
+      border-color: #123b70;
+      background: #eff6ff;
+    }
+
+    button, a {
+      display: inline-block;
+      padding: 12px 16px;
+      border: 0;
+      border-radius: 7px;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button {
+      background: #123b70;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .secondary {
+      background: #e2e8f0;
+      color: #172033;
+    }
+
+    #message {
+      white-space: pre-wrap;
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>MCQ COMPETITION 2026</h1>
+    <p>অনলাইন বহুনির্বাচনি পরীক্ষা</p>
+  </header>
+
+  <main>
+    <div class="card">
+      <div id="message" role="status" aria-live="polite">
+        পরীক্ষা লোড হচ্ছে...
+      </div>
+
+      <div id="examArea" hidden>
+        <p id="progress"></p>
+        <h2 id="questionText"></h2>
+        <div id="options"></div>
+
+        <div class="actions">
+          <button id="previousButton" class="secondary" type="button">
+            আগের প্রশ্ন
+          </button>
+          <button id="nextButton" type="button">
+            পরের প্রশ্ন
+          </button>
+          <button id="submitButton" type="button" hidden>
+            পরীক্ষা জমা দিন
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <a class="secondary" href="dashboard.html">ড্যাশবোর্ডে ফিরুন</a>
+    </div>
+  </main>
+
+  <script>
+    "use strict";
+
+    let questions = [];
+    let currentIndex = 0;
+    const answers = {};
+
+    const message = document.getElementById("message");
+    const examArea = document.getElementById("examArea");
+    const optionsBox = document.getElementById("options");
+
+    async function api(url, options = {}) {
+      const response = await fetch(url, {
+        credentials: "same-origin",
+        ...options,
+        headers: {
+          ...(options.headers || {})
+        }
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || "সার্ভার অনুরোধ গ্রহণ করেনি।");
+      }
+
+      return data;
+    }
+
+    async function loadExam() {
+      try {
+        // সার্ভার কেবল প্রশ্ন ও অপশন পাঠাবে, সঠিক উত্তর নয়।
+        const data = await api("/api/exam/questions");
+
+        if (!Array.isArray(data.questions) ||
+            data.questions.length === 0) {
+          throw new Error("এখন কোনো প্রশ্ন পাওয়া যায়নি।");
+        }
+
+        questions = data.questions;
+        message.hidden = true;
+        examArea.hidden = false;
+        renderQuestion(
+async function saveExamAnswer(question, index, radioInputs) {
+  const response = await fetch("/api/exam/answer", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: "same-origin",
+    body: JSON.stringify({
+      questionId: question.id,
+      selectedOption: index
+    })
+  });
+
+  const result = await response.json();
+
+  if (response.ok && result.success) {
+    answers[question.id] = index;
+
+    radioInputs.forEach((radio) => {
+      radio.disabled = true;
+    });
+
+    return true;
+  }
+
+  if (result.locked && result.selectedOption !== null) {
+    answers[question.id] = result.selectedOption;
+
+    radioInputs.forEach((radio, i) => {
+      radio.checked = i === result.selectedOption;
+      radio.disabled = true;
+    });
+  }
+
+  alert(result.message || "উত্তর সংরক্ষণ করা যায়নি।");
+  return false;
+}
+);
+      } catch (error) {
+        message.textContent =
+          "পরীক্ষা চালু করা যায়নি।\n" +
+          error.message +
+          "\n\nলগইন, পেমেন্ট যাচাই এবং server.js-এর API পরীক্ষা করুন।";
+      }
+    }
+
+    function renderQuestion() {
+      const question = questions[currentIndex];
+
+      document.getElementById("progress").textContent =
+        "প্রশ্ন " + (currentIndex + 1) +
+        " / " + questions.length;
+
+      document.getElementById("questionText").textContent =
+        question.question;
+
+      optionsBox.replaceChildren();
+
+      question.options.forEach((option, index) => {
+        const label = document.createElement("label");
+        label.className = "option";
+
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "answer";
+        radio.value = String(index);
+        radio.checked = answers[question.id] === index;
+
+        radio.addEventListener("change", () => {
+          answers[question.id] = index;
+        });
+
+        label.append(radio, document.createTextNode(" " + option));
+        optionsBox.appendChild(label);
+      });
+
+      document.getElementById("previousButton").disabled =
+        currentIndex === 0;
+
+      document.getElementById("nextButton").hidden =
+        currentIndex === questions.length - 1;
+
+      document.getElementById("submitButton").hidden =
+        currentIndex !== questions.length - 1;
+    }
+
+    document.getElementById("previousButton").addEventListener(
+      "click", () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          renderQuestion();
+        }
+      }
+    );
+
+    document.getElementById("nextButton").addEventListener(
+      "click", () => {
+        if (currentIndex < questions.length - 1) {
+          currentIndex++;
+          renderQuestion();
+        }
+      }
+    );
+
+    document.getElementById("submitButton").addEventListener(
+      "click", async () => {
+        const confirmed = window.confirm(
+          "আপনি কি নিশ্চিতভাবে পরীক্ষা জমা দিতে চান?"
+        );
+
+        if (!confirmed) return;
+
+        const submitButton =
+          document.getElementById("submitButton");
+
+        submitButton.disabled = true;
+        message.hidden = false;
+        message.textContent = "উত্তর জমা হচ্ছে...";
+
+        try {
+          const result = await api("/api/exam/submit", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              answers: questions.map(question => ({
+                questionId: question.id,
+                selectedOption: answers[question.id] ?? null
+              }))
+            })
+          });
+
+          message.textContent =
+            result.message || "পরীক্ষার উত্তর জমা হয়েছে।";
+
+          examArea.hidden = true;
+        } catch (error) {
+          message.textContent =
+            "উত্তর জমা দেওয়া যায়নি: " + error.message;
+
+          submitButton.disabled = false;
+        }
+      }
+    );
+
+    loadExam();
+  </script>
+</body>
+</html>
+```

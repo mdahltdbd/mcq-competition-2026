@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>অ্যাডমিন র‍্যাঙ্কিং | MCQ COMPETITION 2026</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f5f9;
+      margin: 0;
+      padding: 20px;
+      color: #202938;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 15px #00000012;
+    }
+    h1 { text-align: center; color: #174ea6; }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    select, button {
+      padding: 11px;
+      font-size: 16px;
+      border-radius: 6px;
+    }
+    select { flex: 1; min-width: 180px; }
+    button {
+      background: #174ea6;
+      color: white;
+      border: 0;
+      cursor: pointer;
+    }
+    #message { margin: 15px 0; font-weight: bold; }
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 750px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th { background: #174ea6; color: white; }
+    tr:nth-child(even) { background: #f5f7fb; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>MCQ COMPETITION 2026</h1>
+    <h2>অ্যাডমিন গ্রুপ র‍্যাঙ্কিং</h2>
+
+    <div class="controls">
+      <select id="group">
+        <option value="ক">ক — ফাযায়েলে নামাজ</option>
+        <option value="খ">খ — রমযান</option>
+        <option value="গ">গ — হজ্জ</option>
+        <option value="ঘ">ঘ — যাকাত</option>
+        <option value="ঙ">ঙ — ইসলাম</option>
+        <option value="চ">চ — মুহাম্মদ (সা.) জীবনী</option>
+        <option value="ছ">ছ — মহিলাদের ওয়াজ</option>
+        <option value="জ">জ — হেকায়েতে সাহাবা</option>
+      </select>
+      <button id="loadButton" type="button">র‍্যাঙ্কিং দেখুন</button>
+    </div>
+
+    <p id="message">গ্রুপ নির্বাচন করে র‍্যাঙ্কিং দেখুন।</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>স্থান</th>
+            <th>রেজিস্ট্রেশন ID</th>
+            <th>প্রতিযোগীর নাম</th>
+            <th>স্কোর</th>
+            <th>সঠিক</th>
+            <th>ভুল</th>
+            <th>উত্তর দেননি</th>
+            <th>জমার সময়</th>
+          </tr>
+        </thead>
+        <tbody id="rankingBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    const groupSelect = document.getElementById("group");
+    const loadButton = document.getElementById("loadButton");
+    const message = document.getElementById("message");
+    const rankingBody = document.getElementById("rankingBody");
+
+    loadButton.addEventListener("click", loadRanking);
+
+    async function loadRanking() {
+      rankingBody.replaceChildren();
+      message.textContent = "র‍্যাঙ্কিং লোড হচ্ছে...";
+      loadButton.disabled = true;
+
+      try {
+        const group = groupSelect.value;
+        const response = await fetch(
+          "/api/admin/ranking/" + encodeURIComponent(group),
+          { credentials: "same-origin" }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          message.textContent =
+            data.message || "র‍্যাঙ্কিং লোড করা যায়নি।";
+          return;
+        }
+
+        message.textContent =
+          "গ্রুপ " + data.group +
+          " — মোট " + data.total + " জনের ফলাফল";
+
+        if (data.ranking.length === 0) {
+          message.textContent += "। এখনো কোনো ফলাফল নেই।";
+          return;
+        }
+
+        for (const person of data.ranking) {
+          const tr = document.createElement("tr");
+
+          const values = [
+            person.rank,
+            person.registrationId,
+            person.name,
+            person.score,
+            person.correct,
+            person.wrong,
+            person.unanswered,
+            person.submittedAt
+          ];
+
+          for (const value of values) {
+            const td = document.createElement("td");
+            td.textContent = value == null ? "" : String(value);
+            tr.appendChild(td);
+          }
+
+          rankingBody.appendChild(tr);
+        }
+      } catch (error) {
+        message.textContent =
+          "সার্ভারের সঙ্গে যোগাযোগ করা যায়নি। সার্ভার চালু আছে কি না দেখুন।";
+      } finally {
+        loadButton.disabled = false;
+      }
+    }
+  </script>
+
+<button id="downloadCsv" type="button">CSV ফাইল ডাউনলোড</button>
+
+<script>
+  document.getElementById("downloadCsv").addEventListener("click", async () => {
+    const group = document.getElementById("group").value;
+    const message = document.getElementById("message");
+
+    message.textContent = "CSV ফাইল তৈরি হচ্ছে...";
+
+    try {
+      const response = await fetch(
+        "/api/admin/ranking/" + encodeURIComponent(group),
+        { credentials: "same-origin" }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        message.textContent =
+          data.message || "ফাইল তৈরি করা যায়নি।";
+        return;
+      }
+
+      if (!data.ranking || data.ranking.length === 0) {
+        message.textContent = "ডাউনলোড করার মতো কোনো ফলাফল নেই।";
+        return;
+      }
+
+      const headers = [
+        "Rank",
+        "Registration ID",
+        "Name",
+        "Group",
+        "Score",
+        "Correct",
+        "Wrong",
+        "Unanswered",
+        "Submitted At"
+      ];
+
+      function csvCell(value) {
+        let text = value == null ? "" : String(value);
+
+        // CSV Formula Injection থেকে সুরক্ষার জন্য
+        if (/^[\s]*[=+\-@]/.test(text)) {
+          text = "'" + text;
+        }
+
+        return '"' + text.replace(/"/g, '""') + '"';
+      }
+
+      const rows = data.ranking.map(person => [
+        person.rank,
+        person.registrationId,
+        person.name,
+        person.group,
+        person.score,
+        person.correct,
+        person.wrong,
+        person.unanswered,
+        person.submittedAt
+      ]);
+
+      const csv = "\uFEFF" + [
+        headers,
+        ...rows
+      ].map(row => row.map(csvCell).join(",")).join("\r\n");
+
+      const blob = new Blob([csv], {
+        type: "text/csv;charset=utf-8;"
+      });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "MCQ-COMPETITION-2026-Group-" + group + ".csv";
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      URL.revokeObjectURL(url);
+      message.textContent = "CSV ফাইল ডাউনলোড শুরু হয়েছে।";
+    } catch (error) {
+      message.textContent =
+        "সার্ভারে যোগাযোগ করা যায়নি। আবার চেষ্টা করুন।";
+    }
+  });
+</script>
+</body>
+</html>

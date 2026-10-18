@@ -1,0 +1,515 @@
+```html
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCQ COMPETITION 2026 — Registration</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px 12px;
+      font-family: Arial, "Noto Sans Bengali", sans-serif;
+      background: #f1f5f9;
+      color: #172033;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.08);
+    }
+
+    h1 {
+      text-align: center;
+      color: #075e35;
+      font-size: 27px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      font-size: 19px;
+      color: #075e35;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-top: 25px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 14px 0 6px;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    input, select, textarea {
+      border: 1px solid #cbd5e1;
+      background: white;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      color: white;
+      background: #087443;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .secondary { background: #1d4ed8; }
+    .payment { background: #d97706; }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .notice {
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 15px 0;
+      line-height: 1.6;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .success { background: #dcfce7; color: #166534; }
+    .error { background: #fee2e2; color: #991b1b; }
+    .info { background: #dbeafe; color: #1e40af; }
+
+    .hidden { display: none; }
+
+    .check {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-top: 18px;
+      line-height: 1.5;
+    }
+
+    .check input {
+      width: auto;
+      margin-top: 4px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    @media (max-width: 520px) {
+      .container { padding: 17px; }
+      .row { grid-template-columns: 1fr; }
+      h1 { font-size: 23px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <h1>MCQ COMPETITION 2026</h1>
+    <p class="subtitle">অনলাইন প্রতিযোগিতা — নিবন্ধন ফর্ম</p>
+
+    <div class="notice">
+      <strong>নিবন্ধন ফি: ৳৯৯</strong><br>
+      bKash, Nagad বা Upay-এর পেমেন্ট কেবল অনুমোদিত পেমেন্ট ব্যবস্থার মাধ্যমে যাচাই করা হবে।
+      OTP ও পেমেন্ট যাচাই সফল না হওয়া পর্যন্ত নিবন্ধন সম্পূর্ণ বলে গণ্য হবে না।
+    </div>
+
+    <form id="registrationForm">
+      <h2>১. প্রতিযোগীর তথ্য</h2>
+
+      <label for="name">প্রতিযোগীর পূর্ণ নাম *</label>
+      <input id="name" name="name" required maxlength="100">
+
+      <label for="fatherName">পিতার নাম *</label>
+      <input id="fatherName" name="fatherName" required maxlength="100">
+
+      <div class="row">
+        <div>
+          <label for="age">বয়স *</label>
+          <input id="age" name="age" type="number"
+                 min="5" max="100" required>
+        </div>
+        <div>
+          <label for="mobile">মোবাইল নম্বর *</label>
+          <input id="mobile" name="mobile" type="tel"
+                 placeholder="01XXXXXXXXX"
+                 pattern="01[3-9][0-9]{8}"
+                 maxlength="11" required>
+        </div>
+      </div>
+
+      <label for="email">ইমেইল (ঐচ্ছিক)</label>
+      <input id="email" name="email" type="email" maxlength="150">
+
+      <h2>২. ঠিকানা</h2>
+
+      <label for="division">বিভাগ *</label>
+      <select id="division" name="division" required>
+        <option value="">বিভাগ নির্বাচন করুন</option>
+        <option>ঢাকা</option>
+        <option>রাজশাহী</option>
+        <option>চট্টগ্রাম</option>
+        <option>খুলনা</option>
+        <option>সিলেট</option>
+        <option>রংপুর</option>
+        <option>ময়মনসিংহ</option>
+        <option>বরিশাল</option>
+      </select>
+
+      <label for="district">জেলা *</label>
+      <input id="district" name="district" required maxlength="100">
+
+      <label for="upazila">উপজেলা / থানা *</label>
+      <input id="upazila" name="upazila" required maxlength="100">
+
+      <label for="address">সম্পূর্ণ ঠিকানা *</label>
+      <textarea id="address" name="address"
+                required maxlength="500"></textarea>
+
+      <label for="group">প্রতিযোগিতার গ্রুপ *</label>
+      <select id="group" name="group" required>
+        <option value="">গ্রুপ নির্বাচন করুন</option>
+        <option value="ক">গ্রুপ ক</option>
+        <option value="খ">গ্রুপ খ</option>
+        <option value="গ">গ্রুপ গ</option>
+        <option value="ঘ">গ্রুপ ঘ</option>
+        <option value="ঙ">গ্রুপ ঙ</option>
+        <option value="চ">গ্রুপ চ</option>
+        <option value="ছ">গ্রুপ ছ</option>
+        <option value="জ">গ্রুপ জ</option>
+      </select>
+
+      <h2>৩. মোবাইল OTP যাচাই</h2>
+
+      <p>মোবাইল নম্বর লিখে OTP পাঠান। OTP পাওয়ার পর সেটি দিয়ে যাচাই করুন।</p>
+
+      <button type="button" id="sendOtpBtn" class="secondary">
+        OTP পাঠান
+      </button>
+
+      <div id="otpSection" class="hidden">
+        <label for="otp">SMS-এ পাওয়া ৬ সংখ্যার OTP *</label>
+        <input id="otp" inputmode="numeric"
+               autocomplete="one-time-code"
+               maxlength="6" pattern="[0-9]{6}">
+
+        <button type="button" id="verifyOtpBtn">
+          OTP যাচাই করুন
+        </button>
+      </div>
+
+      <div id="otpMessage" aria-live="polite"></div>
+
+      <h2>৪. পাসওয়ার্ড তৈরি</h2>
+
+      <label for="password">পাসওয়ার্ড *</label>
+      <input id="password" type="password"
+             minlength="12" maxlength="72"
+             autocomplete="new-password" required
+             placeholder="কমপক্ষে ১২ অক্ষর">
+
+      <label for="confirmPassword">পাসওয়ার্ড আবার লিখুন *</label>
+      <input id="confirmPassword" type="password"
+             minlength="12" maxlength="72"
+             autocomplete="new-password" required>
+
+      <div class="check">
+        <input type="checkbox" id="terms" required>
+        <label for="terms" style="margin:0;font-weight:normal">
+          আমি প্রতিযোগিতার নিয়মাবলি মেনে চলতে সম্মত।
+        </label>
+      </div>
+
+      <button type="submit" id="registerBtn" disabled>
+        নিবন্ধন ও পাসওয়ার্ড সেট করুন
+      </button>
+    </form>
+
+    <div id="registrationMessage" aria-live="polite"></div>
+
+    <section id="paymentSection" class="hidden">
+      <h2>৫. bKash পেমেন্ট</h2>
+      <p>Registration ID: <strong id="registrationId"></strong></p>
+      <p>নিবন্ধন ফি: ৳৯৯</p>
+
+      <button id="payBtn" class="payment">
+        bKash দিয়ে ৳৯৯ পেমেন্ট করুন
+      </button>
+
+      <p id="paymentMessage" aria-live="polite"></p>
+    </section>
+
+    <p class="footer">
+      MCQ COMPETITION 2026<br>
+      আপনার পাসওয়ার্ড কাউকে দেবেন না।
+    </p>
+  </main>
+
+  <script>
+    "use strict";
+
+    const $ = id => document.getElementById(id);
+
+    let otpVerified = false;
+    let registeredId = "";
+    let paymentInProgress = false;
+
+    function showMessage(id, message, type = "info") {
+      const element = $(id);
+      element.className = "message " + type;
+      element.textContent = message;
+    }
+
+    async function api(url, data) {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message || "অনুরোধ সফল হয়নি। আবার চেষ্টা করুন।"
+        );
+      }
+
+      return result;
+    }
+
+    function getMobile() {
+      return $("mobile").value.trim();
+    }
+
+    $("sendOtpBtn").addEventListener("click", async () => {
+      const mobile = getMobile();
+
+      if (!/^01[3-9]\d{8}$/.test(mobile)) {
+        showMessage(
+          "otpMessage",
+          "সঠিক ১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর লিখুন।",
+          "error"
+        );
+        return;
+      }
+
+      $("sendOtpBtn").disabled = true;
+
+      try {
+        await api("/api/auth/otp/send", { mobile });
+
+        $("otpSection").classList.remove("hidden");
+
+        showMessage(
+          "otpMessage",
+          "OTP পাঠানোর অনুরোধ করা হয়েছে। SMS না এলে gateway settings যাচাই করুন।",
+          "info"
+        );
+      } catch (error) {
+        showMessage("otpMessage", error.message, "error");
+      } finally {
+        $("sendOtpBtn").disabled = false;
+      }
+    });
+
+    $("verifyOtpBtn").addEventListener("click", async () => {
+      const mobile = getMobile();
+      const otp = $("otp").value.trim();
+
+      if (!/^\d{6}$/.test(otp)) {
+        showMessage(
+          "otpMessage",
+          "SMS-এ পাওয়া ৬ সংখ্যার OTP লিখুন।",
+          "error"
+        );
+        return;
+      }
+
+      $("verifyOtpBtn").disabled = true;
+
+      try {
+        await api("/api/auth/otp/verify", { mobile, otp });
+
+        otpVerified = true;
+        $("mobile").readOnly = true;
+        $("sendOtpBtn").disabled = true;
+        $("verifyOtpBtn").disabled = true;
+        $("registerBtn").disabled = false;
+
+        showMessage(
+          "otpMessage",
+          "মোবাইল OTP যাচাই সফল হয়েছে। এখন নিবন্ধন করুন।",
+          "success"
+        );
+      } catch (error) {
+        showMessage("otpMessage", error.message, "error");
+      } finally {
+        if (!otpVerified) $("verifyOtpBtn").disabled = false;
+      }
+    });
+
+    $("registrationForm").addEventListener("submit", async event => {
+      event.preventDefault();
+
+      if (!otpVerified) {
+        showMessage(
+          "registrationMessage",
+          "প্রথমে মোবাইল OTP যাচাই করুন।",
+          "error"
+        );
+        return;
+      }
+
+      const password = $("password").value;
+      const confirmPassword = $("confirmPassword").value;
+
+      if (password.length < 12 || password.length > 72) {
+        showMessage(
+          "registrationMessage",
+          "পাসওয়ার্ড ১২ থেকে ৭২ অক্ষরের মধ্যে হতে হবে।",
+          "error"
+        );
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showMessage(
+          "registrationMessage",
+          "দুটি পাসওয়ার্ড এক নয়।",
+          "error"
+        );
+        return;
+      }
+
+      const data = {
+        name: $("name").value.trim(),
+        fatherName: $("fatherName").value.trim(),
+        age: Number($("age").value),
+        mobile: getMobile(),
+        email: $("email").value.trim(),
+        division: $("division").value,
+        district: $("district").value.trim(),
+        upazila: $("upazila").value.trim(),
+        address: $("address").value.trim(),
+        group: $("group").value
+      };
+
+      $("registerBtn").disabled = true;
+
+      try {
+        /*
+          নিরাপত্তা:
+          এই ধাপে সার্ভারকে একই request-এ registration ও password
+          তৈরি করতে হবে। নিচের endpoint আগের server.js-এ এখনো
+          যোগ করা হয়নি; পরবর্তী backend update ছাড়া এটি সফল হবে না।
+        */
+        const result = await api("/api/register/complete", {
+          ...data,
+          password
+        });
+
+        registeredId =
+          result.registrationId || result.registration_id || "";
+
+        if (!registeredId) {
+          throw new Error("সার্ভার Registration ID দেয়নি।");
+        }
+
+        $("registrationId").textContent = registeredId;
+        $("paymentSection").classList.remove("hidden");
+
+        showMessage(
+          "registrationMessage",
+          "নিবন্ধন সফল। এখন পেমেন্ট সম্পন্ন করুন।",
+          "success"
+        );
+      } catch (error) {
+        showMessage(
+          "registrationMessage",
+          error.message,
+          "error"
+        );
+      } finally {
+        $("registerBtn").disabled = false;
+      }
+    });
+
+    $("payBtn").addEventListener("click", async () => {
+      if (paymentInProgress) return;
+
+      paymentInProgress = true;
+      $("payBtn").disabled = true;
+
+      try {
+        /*
+          bKash payment endpoint-এর জন্য authenticated session দরকার।
+          Registration complete করার পর সার্ভারকে session তৈরি করতে হবে
+          অথবা নিরাপদভাবে login করাতে হবে।
+        */
+        const result = await api("/api/payment/bkash/create", {});
+
+        if (!result.paymentURL) {
+          throw new Error("bKash payment URL পাওয়া যায়নি।");
+        }
+
+        showMessage(
+          "paymentMessage",
+          "bKash পেমেন্ট পেজ খোলা হচ্ছে। পেমেন্টের পর সার্ভারে status যাচাই হবে।",
+          "info"
+        );
+
+        window.location.assign(result.paymentURL);
+      } catch (error) {
+        showMessage("paymentMessage", error.message, "error");
+      } finally {
+        paymentInProgress = false;
+        $("payBtn").disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
+```

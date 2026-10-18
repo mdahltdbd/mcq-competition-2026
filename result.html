@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCQ COMPETITION 2026 — ফলাফল</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 30px auto;
+    }
+
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      text-align: center;
+      color: #14532d;
+      font-size: 25px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+    }
+
+    #status {
+      text-align: center;
+      margin: 20px 0;
+      line-height: 1.7;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .item {
+      padding: 16px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      overflow-wrap: anywhere;
+    }
+
+    .item span {
+      display: block;
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+
+    .item strong {
+      font-size: 21px;
+    }
+
+    .score {
+      grid-column: 1 / -1;
+      background: #dcfce7;
+      text-align: center;
+    }
+
+    .score strong {
+      color: #166534;
+      font-size: 32px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      border: 0;
+      border-radius: 8px;
+      background: #166534;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #334155;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 450px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .score {
+        grid-column: auto;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .card {
+        box-shadow: none;
+      }
+
+      button {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>MCQ COMPETITION 2026</h1>
+      <p class="subtitle">পরীক্ষার ফলাফল</p>
+
+      <div id="status" role="status">
+        ফলাফল লোড হচ্ছে...
+      </div>
+
+      <section id="result" class="hidden">
+        <div>
+          <p><strong>নাম:</strong> <span id="name"></span></p>
+          <p><strong>Registration ID:</strong>
+            <span id="registrationId"></span>
+          </p>
+          <p><strong>গ্রুপ:</strong> <span id="group"></span></p>
+        </div>
+
+        <div class="grid">
+          <div class="item score">
+            <span>আপনার প্রাপ্ত নম্বর</span>
+            <strong id="score"></strong>
+          </div>
+
+          <div class="item">
+            <span>মোট প্রশ্ন</span>
+            <strong id="total"></strong>
+          </div>
+
+          <div class="item">
+            <span>সঠিক উত্তর</span>
+            <strong id="correct"></strong>
+          </div>
+
+          <div class="item">
+            <span>ভুল উত্তর</span>
+            <strong id="wrong"></strong>
+          </div>
+
+          <div class="item">
+            <span>উত্তর না দেওয়া</span>
+            <strong id="unanswered"></strong>
+          </div>
+        </div>
+
+        <p>
+          <strong>জমা দেওয়ার সময়:</strong>
+          <span id="submittedAt"></span>
+        </p>
+
+        <button type="button" onclick="window.print()">
+          ফলাফল প্রিন্ট করুন
+        </button>
+      </section>
+
+      <button
+        type="button"
+        class="secondary"
+        onclick="location.href='/dashboard.html'">
+        ড্যাশবোর্ডে ফিরে যান
+      </button>
+    </section>
+  </main>
+
+  <script>
+    async function loadResult() {
+      const status = document.getElementById("status");
+
+      try {
+        const response = await fetch("/api/result", {
+          credentials: "same-origin"
+        });
+
+        const data = await response.json();
+
+        if (response.status === 401) {
+          status.textContent = "ফলাফল দেখতে প্রথমে লগইন করুন।";
+          return;
+        }
+
+        if (!response.ok || !data.success) {
+          status.textContent =
+            data.message || "ফলাফল লোড করা যায়নি।";
+          return;
+        }
+
+        if (!data.published) {
+          status.textContent =
+            data.message || "ফলাফল এখনো প্রকাশ করা হয়নি।";
+          return;
+        }
+
+        const r = data.result;
+
+        document.getElementById("name").textContent = r.name;
+        document.getElementById("registrationId").textContent =
+          r.registrationId;
+        document.getElementById("group").textContent = r.group;
+        document.getElementById("score").textContent = r.score;
+        document.getElementById("total").textContent = r.total;
+        document.getElementById("correct").textContent = r.correct;
+        document.getElementById("wrong").textContent = r.wrong;
+        document.getElementById("unanswered").textContent =
+          r.unanswered;
+        document.getElementById("submittedAt").textContent =
+          r.submittedAt;
+
+        document.getElementById("result").classList.remove("hidden");
+        status.textContent = "আপনার ফলাফল পাওয়া গেছে।";
+
+      } catch (error) {
+        status.textContent =
+          "সার্ভারের সঙ্গে যোগাযোগ করা যায়নি। পরে আবার চেষ্টা করুন।";
+      }
+    }
+
+    loadResult();
+  </script>
+</body>
+</html>

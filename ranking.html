@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCQ COMPETITION 2026 — মেধাতালিকা</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f1f5f9;
+      color: #1e293b;
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      max-width: 950px;
+      margin: 20px auto;
+      padding: 22px;
+      background: white;
+      border-radius: 12px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #166534;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    select, button {
+      padding: 11px;
+      border-radius: 7px;
+      border: 1px solid #cbd5e1;
+      font-size: 16px;
+    }
+
+    select {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    button {
+      background: #166534;
+      color: white;
+      cursor: pointer;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 550px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background: #dcfce7;
+    }
+
+    #status {
+      margin-top: 15px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <h1>MCQ COMPETITION 2026</h1>
+    <h2>গ্রুপভিত্তিক মেধাতালিকা</h2>
+
+    <label for="group">গ্রুপ নির্বাচন করুন</label>
+
+    <select id="group">
+      <option value="ক">ক — ফাযায়েলে নামাজ</option>
+      <option value="খ">খ — রমযান</option>
+      <option value="গ">গ — হজ্জ</option>
+      <option value="ঘ">ঘ — যাকাত</option>
+      <option value="ঙ">ঙ — ইসলাম</option>
+      <option value="চ">চ — মুহাম্মদ (সা.) জীবনী</option>
+      <option value="ছ">ছ — মহিলাদের ওয়াজ</option>
+      <option value="জ">জ — হেকায়েতে সাহাবা</option>
+    </select>
+
+    <button id="loadRanking" type="button">
+      মেধাতালিকা দেখুন
+    </button>
+
+    <p id="status" role="status">একটি গ্রুপ নির্বাচন করুন।</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>স্থান</th>
+            <th>Registration ID</th>
+            <th>নাম</th>
+            <th>নম্বর</th>
+          </tr>
+        </thead>
+        <tbody id="rankingBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    const groupSelect = document.getElementById("group");
+    const statusBox = document.getElementById("status");
+    const rankingBody = document.getElementById("rankingBody");
+    const loadButton = document.getElementById("loadRanking");
+
+    loadButton.addEventListener("click", loadRanking);
+
+    async function loadRanking() {
+      rankingBody.replaceChildren();
+      statusBox.textContent = "মেধাতালিকা লোড হচ্ছে...";
+      loadButton.disabled = true;
+
+      try {
+        const group = groupSelect.value;
+
+        const response = await fetch(
+          "/api/ranking/" + encodeURIComponent(group),
+          { credentials: "same-origin" }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          statusBox.textContent =
+            data.message || "মেধাতালিকা লোড করা যায়নি।";
+          return;
+        }
+
+        if (data.ranking.length === 0) {
+          statusBox.textContent =
+            "এই গ্রুপে এখনো কোনো পরীক্ষার ফলাফল নেই।";
+          return;
+        }
+
+        for (const item of data.ranking) {
+          const tr = document.createElement("tr");
+
+          const values = [
+            item.rank,
+            item.registrationId,
+            item.name,
+            item.score
+          ];
+
+          for (const value of values) {
+            const td = document.createElement("td");
+            td.textContent = String(value);
+            tr.appendChild(td);
+          }
+
+          rankingBody.appendChild(tr);
+        }
+
+        statusBox.textContent =
+          "গ্রুপ " + data.group +
+          " — মোট " + data.totalParticipants +
+          " জনের ফলাফল পাওয়া গেছে।";
+
+      } catch (error) {
+        statusBox.textContent =
+          "সার্ভারের সঙ্গে যোগাযোগ করা যায়নি।";
+      } finally {
+        loadButton.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>

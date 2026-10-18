@@ -1,0 +1,361 @@
+```html
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCQ COMPETITION 2026 — Login</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, "Noto Sans Bengali", sans-serif;
+      background: #f1f5f9;
+      color: #172033;
+    }
+
+    .card {
+      background: white;
+      width: 100%;
+      max-width: 470px;
+      padding: 28px;
+      border-radius: 16px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.08);
+    }
+
+    h1 {
+      text-align: center;
+      color: #087443;
+      font-size: 25px;
+      margin: 0 0 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 16px 0 7px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button, .link-button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #087443;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .secondary { background: #1d4ed8; }
+    .danger { background: #b91c1c; }
+
+    .message {
+      padding: 12px;
+      margin-top: 14px;
+      border-radius: 8px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .success { background: #dcfce7; color: #166534; }
+    .error { background: #fee2e2; color: #991b1b; }
+    .info { background: #dbeafe; color: #1e40af; }
+
+    .hidden { display: none !important; }
+
+    .status {
+      padding: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 13px;
+      color: #64748b;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <h1>MCQ COMPETITION 2026</h1>
+    <p class="subtitle">প্রতিযোগী Login Portal</p>
+
+    <section id="loginSection">
+      <form id="loginForm">
+        <label for="registrationId">Registration ID</label>
+        <input
+          id="registrationId"
+          name="registrationId"
+          type="text"
+          placeholder="যেমন: MCQ26-ABC123"
+          autocomplete="username"
+          required
+          maxlength="50"
+        >
+
+        <label for="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+          maxlength="72"
+        >
+
+        <button id="loginBtn" type="submit">Login করুন</button>
+      </form>
+
+      <button id="checkBtn" class="secondary" type="button">
+        Login Status দেখুন
+      </button>
+
+      <a class="link-button secondary" href="reg.html">
+        নতুন Registration
+      </a>
+
+      <div id="loginMessage" aria-live="polite"></div>
+    </section>
+
+    <section id="dashboardSection" class="hidden">
+      <div class="message success">
+        <strong>Login সফল!</strong>
+      </div>
+
+      <div class="status">
+        <strong>Login Status:</strong> <span id="statusText">Login করা আছে</span><br>
+        <strong>Registration ID:</strong> <span id="userRegistrationId">—</span>
+      </div>
+
+      <a class="link-button" href="index.html">Home</a>
+      <a class="link-button secondary" href="exam.html">পরীক্ষার পেজ</a>
+      <a class="link-button secondary" href="result.html">ফলাফল</a>
+
+      <button id="refreshBtn" class="secondary" type="button">
+        Status Refresh করুন
+      </button>
+
+      <button id="logoutBtn" class="danger" type="button">
+        Logout করুন
+      </button>
+
+      <div id="dashboardMessage" aria-live="polite"></div>
+    </section>
+
+    <p class="footer">
+      আপনার Password কারও সঙ্গে শেয়ার করবেন না।
+    </p>
+  </main>
+
+  <script>
+    "use strict";
+
+    const $ = id => document.getElementById(id);
+
+    function showMessage(id, message, type = "info") {
+      const element = $(id);
+      element.className = "message " + type;
+      element.textContent = message;
+    }
+
+    async function requestJSON(url, options = {}) {
+      const response = await fetch(url, {
+        credentials: "same-origin",
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        }
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "সার্ভারের অনুরোধ সফল হয়নি।"
+        );
+      }
+
+      return data;
+    }
+
+    function showLoggedIn(registrationId) {
+      $("loginSection").classList.add("hidden");
+      $("dashboardSection").classList.remove("hidden");
+
+      $("statusText").textContent = "Login করা আছে";
+      $("userRegistrationId").textContent =
+        registrationId || "নির্ধারিত নয়";
+    }
+
+    function showLoggedOut() {
+      $("dashboardSection").classList.add("hidden");
+      $("loginSection").classList.remove("hidden");
+    }
+
+    async function checkLoginStatus() {
+      try {
+        const result = await requestJSON("/api/auth/me", {
+          method: "GET",
+          headers: {}
+        });
+
+        if (result.loggedIn) {
+          showLoggedIn(result.registrationId);
+          showMessage(
+            "loginMessage",
+            "আপনি ইতিমধ্যে Login করা আছেন।",
+            "success"
+          );
+        } else {
+          showLoggedOut();
+          showMessage(
+            "loginMessage",
+            "আপনি এখন Login করা নেই।",
+            "info"
+          );
+        }
+      } catch (error) {
+        showMessage(
+          "loginMessage",
+          error.message,
+          "error"
+        );
+      }
+    }
+
+    $("loginForm").addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const registrationId =
+        $("registrationId").value.trim();
+
+      const password = $("password").value;
+
+      if (!registrationId || !password) {
+        showMessage(
+          "loginMessage",
+          "Registration ID ও Password দিন।",
+          "error"
+        );
+        return;
+      }
+
+      $("loginBtn").disabled = true;
+
+      try {
+        const result = await requestJSON(
+          "/api/auth/login",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              registrationId,
+              password
+            })
+          }
+        );
+
+        $("password").value = "";
+
+        showLoggedIn(result.registrationId || registrationId);
+
+        showMessage(
+          "dashboardMessage",
+          result.message || "Login সফল হয়েছে।",
+          "success"
+        );
+      } catch (error) {
+        showMessage(
+          "loginMessage",
+          error.message || "Login সফল হয়নি।",
+          "error"
+        );
+      } finally {
+        $("loginBtn").disabled = false;
+      }
+    });
+
+    $("checkBtn").addEventListener(
+      "click",
+      checkLoginStatus
+    );
+
+    $("refreshBtn").addEventListener(
+      "click",
+      checkLoginStatus
+    );
+
+    $("logoutBtn").addEventListener("click", async () => {
+      $("logoutBtn").disabled = true;
+
+      try {
+        await requestJSON("/api/auth/logout", {
+          method: "POST",
+          body: JSON.stringify({})
+        });
+
+        $("password").value = "";
+        $("registrationId").value = "";
+
+        showLoggedOut();
+
+        showMessage(
+          "loginMessage",
+          "আপনি নিরাপদে Logout করেছেন।",
+          "success"
+        );
+      } catch (error) {
+        showMessage(
+          "dashboardMessage",
+          error.message,
+          "error"
+        );
+      } finally {
+        $("logoutBtn").disabled = false;
+      }
+    });
+
+    // Page open হলে server-এর session যাচাই করুন।
+    checkLoginStatus();
+  </script>
+</body>
+</html>
+```

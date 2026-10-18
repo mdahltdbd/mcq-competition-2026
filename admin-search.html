@@ -1,0 +1,314 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>প্রতিযোগী অনুসন্ধান | MCQ COMPETITION 2026</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f5f9;
+      margin: 0;
+      padding: 20px;
+      color: #202938;
+    }
+    main {
+      max-width: 850px;
+      margin: auto;
+      background: white;
+      padding: 22px;
+      border-radius: 12px;
+      box-shadow: 0 3px 15px #00000012;
+    }
+    h1 { color: #174ea6; }
+    input, button {
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 6px;
+    }
+    input {
+      width: 95%;
+      max-width: 500px;
+      border: 1px solid #bbb;
+      margin-bottom: 10px;
+    }
+    button {
+      border: 0;
+      background: #174ea6;
+      color: white;
+      cursor: pointer;
+    }
+    .item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+      overflow-wrap: anywhere;
+    }
+    .key { font-weight: bold; }
+    #message { margin: 16px 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>MCQ COMPETITION 2026</h1>
+    <h2>অ্যাডমিন — প্রতিযোগী অনুসন্ধান</h2>
+
+    <form id="searchForm">
+      <label for="searchInput">
+        রেজিস্ট্রেশন নম্বর অথবা মোবাইল নম্বর
+      </label>
+      <br><br>
+      <input
+        id="searchInput"
+        type="text"
+        minlength="3"
+        maxlength="100"
+        required
+        placeholder="নম্বর লিখুন"
+        autocomplete="off"
+      >
+      <br>
+      <button id="searchButton" type="submit">অনুসন্ধান করুন</button>
+    </form>
+
+    <p id="message" role="status"></p>
+    <section id="result" aria-live="polite"></section>
+  </main>
+
+  <script>
+    const form = document.getElementById("searchForm");
+    const input = document.getElementById("searchInput");
+    const button = document.getElementById("searchButton");
+    const message = document.getElementById("message");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const query = input.value.trim();
+      result.replaceChildren();
+
+      if (query.length < 3) {
+        message.textContent = "কমপক্ষে ৩টি অক্ষর বা সংখ্যা লিখুন।";
+        return;
+      }
+
+      button.disabled = true;
+      message.textContent = "অনুসন্ধান চলছে...";
+
+      try {
+        const response = await fetch(
+          "/api/admin/participant-search?q=" +
+          encodeURIComponent(query),
+          { credentials: "same-origin" }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          message.textContent =
+            data.message || "অনুসন্ধান করা যায়নি।";
+          return;
+        }
+
+        message.textContent = "প্রতিযোগীর তথ্য পাওয়া গেছে।";
+
+        const p = data.participant;
+
+        const fields = [
+          ["রেজিস্ট্রেশন নম্বর", p.registration_id],
+          ["নাম", p.name],
+          ["পিতার নাম", p.father_name],
+          ["বয়স", p.age],
+          ["মোবাইল", p.mobile],
+          ["ইমেইল", p.email],
+          ["বিভাগ", p.division],
+          ["জেলা", p.district],
+          ["উপজেলা", p.upazila],
+          ["ঠিকানা", p.address],
+          ["গ্রুপ", p.group_name],
+          ["রেজিস্ট্রেশনের তারিখ", p.created_at]
+        ];
+
+        for (const [label, value] of fields) {
+          const div = document.createElement("div");
+          div.className = "item";
+
+          const key = document.createElement("span");
+          key.className = "key";
+          key.textContent = label + ": ";
+
+          const val = document.createElement("span");
+          val.textContent =
+            value == null || value === "" ? "তথ্য নেই" : String(value);
+
+          div.append(key, val);
+          result.appendChild(div);
+        }
+      } catch (error) {
+        message.textContent =
+          "সার্ভারের সঙ্গে যোগাযোগ করা যায়নি।";
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>প্রতিযোগী অনুসন্ধান | MCQ COMPETITION 2026</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f5f9;
+      margin: 0;
+      padding: 20px;
+      color: #202938;
+    }
+    main {
+      max-width: 850px;
+      margin: auto;
+      background: white;
+      padding: 22px;
+      border-radius: 12px;
+      box-shadow: 0 3px 15px #00000012;
+    }
+    h1 { color: #174ea6; }
+    input, button {
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 6px;
+    }
+    input {
+      width: 95%;
+      max-width: 500px;
+      border: 1px solid #bbb;
+      margin-bottom: 10px;
+    }
+    button {
+      border: 0;
+      background: #174ea6;
+      color: white;
+      cursor: pointer;
+    }
+    .item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+      overflow-wrap: anywhere;
+    }
+    .key { font-weight: bold; }
+    #message { margin: 16px 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>MCQ COMPETITION 2026</h1>
+    <h2>অ্যাডমিন — প্রতিযোগী অনুসন্ধান</h2>
+
+    <form id="searchForm">
+      <label for="searchInput">
+        রেজিস্ট্রেশন নম্বর অথবা মোবাইল নম্বর
+      </label>
+      <br><br>
+      <input
+        id="searchInput"
+        type="text"
+        minlength="3"
+        maxlength="100"
+        required
+        placeholder="নম্বর লিখুন"
+        autocomplete="off"
+      >
+      <br>
+      <button id="searchButton" type="submit">অনুসন্ধান করুন</button>
+    </form>
+
+    <p id="message" role="status"></p>
+    <section id="result" aria-live="polite"></section>
+  </main>
+
+  <script>
+    const form = document.getElementById("searchForm");
+    const input = document.getElementById("searchInput");
+    const button = document.getElementById("searchButton");
+    const message = document.getElementById("message");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const query = input.value.trim();
+      result.replaceChildren();
+
+      if (query.length < 3) {
+        message.textContent = "কমপক্ষে ৩টি অক্ষর বা সংখ্যা লিখুন।";
+        return;
+      }
+
+      button.disabled = true;
+      message.textContent = "অনুসন্ধান চলছে...";
+
+      try {
+        const response = await fetch(
+          "/api/admin/participant-search?q=" +
+          encodeURIComponent(query),
+          { credentials: "same-origin" }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          message.textContent =
+            data.message || "অনুসন্ধান করা যায়নি।";
+          return;
+        }
+
+        message.textContent = "প্রতিযোগীর তথ্য পাওয়া গেছে।";
+
+        const p = data.participant;
+
+        const fields = [
+          ["রেজিস্ট্রেশন নম্বর", p.registration_id],
+          ["নাম", p.name],
+          ["পিতার নাম", p.father_name],
+          ["বয়স", p.age],
+          ["মোবাইল", p.mobile],
+          ["ইমেইল", p.email],
+          ["বিভাগ", p.division],
+          ["জেলা", p.district],
+          ["উপজেলা", p.upazila],
+          ["ঠিকানা", p.address],
+          ["গ্রুপ", p.group_name],
+          ["রেজিস্ট্রেশনের তারিখ", p.created_at]
+        ];
+
+        for (const [label, value] of fields) {
+          const div = document.createElement("div");
+          div.className = "item";
+
+          const key = document.createElement("span");
+          key.className = "key";
+          key.textContent = label + ": ";
+
+          const val = document.createElement("span");
+          val.textContent =
+            value == null || value === "" ? "তথ্য নেই" : String(value);
+
+          div.append(key, val);
+          result.appendChild(div);
+        }
+      } catch (error) {
+        message.textContent =
+          "সার্ভারের সঙ্গে যোগাযোগ করা যায়নি।";
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
